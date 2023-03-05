@@ -671,6 +671,7 @@ cmd_tab:
 	mwa		dvstat+2 loadad
 	ldx		icidno
 	mva		icax4,x ddevic
+	clc
 	jsr		PHLoadHandler
 	bcs		fail
 	
