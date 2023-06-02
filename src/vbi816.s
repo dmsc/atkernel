@@ -1,6 +1,6 @@
 ;	Altirra - Atari 800/800XL/5200 emulator
 ;	Modular Kernel ROM - 65C816 Vertical Blank Interrupt Services
-;	Copyright (C) 2008-2018 Avery Lee
+;	Copyright (C) 2008-2023 Avery Lee
 ;
 ;	Copying and distribution of this file, with or without modification,
 ;	are permitted in any medium without royalty provided the copyright
@@ -277,22 +277,16 @@ still_running:
 ; X = MSB
 ; Y = LSB
 ;
-.proc VBISetVector
-	;A = item to update
-	;	1-5	timer 1-5 counter value
-	;	6	VVBLKI
-	;	7	VVBLKD
-	;X = MSB
-	;Y = LSB
-	;
-	;NOTE:
-	;The Atari OS Manual says that DLIs will be disabled after SETVBV is called.
-	;This is a lie -- neither the OS-B nor XL kernels do this, and the Bewesoft
-	;8-players demo depends on it being left enabled.
-	;
-	;IRQ mask state must be saved across this proc. DOSDISKA.ATR breaks if IRQs
-	;are unmasked.
-	
+;NOTE:
+;The Atari OS Manual says that DLIs will be disabled after SETVBV is called.
+;This only applies to OS-A, which writes NMIEN from SETVBV. OS-B and the
+;XL/XE OS avoid this, and the Bewesoft 8-players demo depends on DLIs being
+;left enabled.
+;
+;IRQ mask state must be saved across this proc. DOSDISKA.ATR breaks if IRQs
+;are unmasked.
+;
+.proc VBISetVector	
 	asl
 	sta		intemp
 	php
