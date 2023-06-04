@@ -75,9 +75,10 @@ waitForChar2:
 	
 	;do keyboard click (we do this even for ignored ctrl+shift+keys)
 	.if _KERNEL_XLXE
-	bit		noclik
-	bmi		no_click
+	ldy		noclik
+	bne		no_click
 	.endif
+
 	ldy		#12
 	jsr		Bell
 no_click:
@@ -167,20 +168,27 @@ KeyboardSpecial = CIOExitNotSupported
 ;
 .proc	KeyboardIRQ
 	;reset software repeat timer
-	mva		#$30	srtimr
+	mva		krpdel	srtimr
 	
 	;read new key
 	lda		kbcode
+
+	;save key
+	pha
 
 	;check for HELP
 	and		#$3f
 	cmp		#$11
 	bne		not_help
+
+	;restore HELP key with original modifiers
+	pla
 	sta		helpfg
-	beq		xit2
+	bne		xit2
 
 not_help:
-	lda		kbcode	
+	;restore key
+	pla
 	
 	;check if it is the same as the prev key
 	cmp		ch1

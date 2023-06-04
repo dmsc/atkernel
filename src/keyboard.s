@@ -80,8 +80,8 @@ waitForChar2:
 	
 	;do keyboard click (we do this even for ignored ctrl+shift+keys)
 	.if _KERNEL_XLXE
-	bit		noclik
-	bmi		no_click
+	ldy		noclik
+	bne		no_click
 	.endif
 
 	ldy		#12
@@ -188,15 +188,22 @@ KeyboardSpecial = CIOExitNotSupported
 	lda		kbcode
 
 .if _KERNEL_XLXE
+	;save key
+	pha
+
 	;check for HELP
 	and		#$3f
 	cmp		#$11
 	bne		not_help
+
+	;restore HELP key with original modifiers
+	pla
 	sta		helpfg
-	beq		xit2
+	bne		xit2
 
 not_help:
-	lda		kbcode
+	;restore key
+	pla
 .endif
 	
 	;check if it is the same as the prev key
