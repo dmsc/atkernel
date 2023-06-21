@@ -86,11 +86,7 @@ no_click:
 	;ignore char if both ctrl and shift are pressed
 	cmp		#$c0
 	bcs		waitForChar
-	
-	;trap Ctrl-3 and return EOF
-	cmp		#$9a
-	beq		isCtrl3
-			
+				
 	;translate char
 	tay
 	lda		(keydef),y
@@ -104,6 +100,7 @@ no_click:
 	bcc		toggle_shift	;$82 - caps lock
 	cmp		#$85
 	bcc		shift_ctrl_on	;$83 - shift caps lock / $84 - ctrl caps lock
+	beq		isCtrl3			;$85 - EOF
 	
 valid_key:
 	;check for alpha key
