@@ -501,7 +501,8 @@ wait:
 	bmi		error			;bail if so
 	lda		recvdn			;check for receive complete
 	beq		wait			;keep waiting if not
-	tya						;set flags from status
+	ldy		status			;set flags from status, and reload in case recvdn
+							;was hit first after IRQ set status
 	
 error:
 	;Mask interrupts, but exit with them masked. We do this in order to
